@@ -99,15 +99,13 @@ class Normalizer:
 
     def normalize_tokenwise(self, text, domain):
         """
-        This method returns a list of tuples where each tuple contains the original token from 'text' and the
-        normalized version of the token.
-        If 'text' consists of multiple sentences, the result will be a list of list of tuples, where each inner list
-        represents one sentence.
+        This method returns a list of list of tuples where each tuple contains the original token from 'text' and the
+        normalized version of the token, and each list represents one sentence.
 
         Example:
-        input: 'Það voru e.t.v. 5 km eftir'
-        returns: [('Það', 'Það'), ('voru', 'voru'), ('e.t.v.', 'ef til vill'),
-        ('55', 'fimmtíu og fimm'), ('km', 'kílómetrar), ('eftir', 'eftir)]
+        input: 'Það voru e.t.v. 54 km eftir. Þannig fór nú það.'
+        returns: [[('Það', 'Það'), ('voru', 'voru'), ('e.t.v.', 'ef til vill'), ('55', 'fimmtíu og fjórir'),
+        ('km', 'kílómetrar), ('eftir', 'eftir)], [('Þannig', 'Þannig'), ('fór', 'fór'), ('nú', 'nú'), ('það', 'það')]]
 
         :param text:
         :param domain:
