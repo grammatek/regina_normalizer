@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from pos_tagger import POSTagger
+from regina_normalizer import pos_tagger
 from regina_normalizer import abbr_functions as af
 from regina_normalizer import number_functions as nf
 
@@ -9,7 +9,7 @@ from regina_normalizer import number_functions as nf
 class Normalizer:
 
     def __init__(self):
-        self.tagger = POSTagger.get_tagger()
+        self.tagger = pos_tagger.POSTagger.get_tagger()
 
     def normalize(self, sent, domain):
 	    sent = af.replace_abbreviations(sent, domain)
