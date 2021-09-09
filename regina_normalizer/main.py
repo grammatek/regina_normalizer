@@ -14,7 +14,7 @@ class Normalizer:
     def normalize(self, sent, domain):
 	    sent = af.replace_abbreviations(sent, domain)
 	    sent = nf.handle_sentence(sent, domain, self.tagger)
-	    print(sent)
+	    return sent
 
 
 def main():
