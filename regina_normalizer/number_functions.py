@@ -174,4 +174,28 @@ def handle_sentence(sent, domain, tagger):
     return returnsent
 
 
+# Fill in the number, letter, link or symbol based on the tag of the next word
+# return a list of tuples containing a mapping from original token to normalized token
+def handle_sentence_tokenwise(sent, domain, tagger):
+    returnsent = []
+    sentsplit = sent.split()
+    tagsent = tagger.tag_sent(sentsplit)
+    split_zip = list(zip(sentsplit, list(tagsent[1:]) + [""]))
+    for word, nexttag in split_zip:
+        norm_word = word
+        if re.match("[\d½⅓¼⅔¾\-\–]", norm_word):
+            norm_word = number_findall(norm_word, nexttag, domain)
+        if re.match(nh.roman_letters_ptrn, norm_word):
+            norm_word = " ".join(norm_word)
+        elif re.match(nh.letters_ptrn, norm_word):
+            norm_word = " ".join(norm_word)
+        elif re.match(ap.link_ptrn_all, norm_word):
+            norm_word = wlink_fun(norm_word)
+        elif re.match(symb_ptrn, norm_word):
+            norm_word = af.replace_all(norm_word, symb_dict, symb_ptrn)
+        returnsent.append((word, norm_word))
+
+    return returnsent
+
+
 
