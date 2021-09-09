@@ -83,19 +83,20 @@ class Normalizer:
         """
         Normalizes input, taking domain into account ('sport' or '')
         Example:
-        text: 'Það voru e.t.v. 55 km eftir'
-        returns: 'Það voru ef til vill fimmtíu og fimm kílómetrar eftir'
+        text: 'Það voru e.t.v. 55 km eftir. Þannig fór nú það.'
+        returns: [['Það voru ef til vill fimmtíu og fimm kílómetrar eftir .'], ['Þannig fór nú það .']]
 
         :param text: text to normalize
         :param domain: domain to take into account, 'sport' causes a special handling of hyphens
         :return: normalized version of text
         """
-        res = ''
+        res = []
         for sent in split_into_sentences(text):
             sent = af.replace_abbreviations(sent, domain)
-            res += ' ' + nf.handle_sentence(sent, domain, self.tagger)
+            normalized = nf.handle_sentence(sent, domain, self.tagger).strip()
+            res.append([normalized])
 
-        return res.strip()
+        return res
 
     def normalize_tokenwise(self, text, domain):
         """
@@ -105,7 +106,8 @@ class Normalizer:
         Example:
         input: 'Það voru e.t.v. 54 km eftir. Þannig fór nú það.'
         returns: [[('Það', 'Það'), ('voru', 'voru'), ('e.t.v.', 'ef til vill'), ('55', 'fimmtíu og fjórir'),
-        ('km', 'kílómetrar), ('eftir', 'eftir)], [('Þannig', 'Þannig'), ('fór', 'fór'), ('nú', 'nú'), ('það', 'það')]]
+        ('km', 'kílómetrar), ('eftir', 'eftir), ('.', '.')], [('Þannig', 'Þannig'), ('fór', 'fór'), ('nú', 'nú'),
+        ('það', 'það'), ('.', '.')]]
 
         :param text:
         :param domain:
