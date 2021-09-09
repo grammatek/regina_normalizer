@@ -20,12 +20,12 @@ class Normalizer:
 
     def extract_prenorm_tuples(self, prenorm_sent, sent):
         """
-        Find changes in prenorm_sent compared to sent and create tuples with indices
+        Find changes in prenorm_sent compared to sent and create tuples with original token and expanded abbreviation
         Example:
         sent == Það voru t.d. 5 atriði
         prenorm_sent == Það voru til dæmis 5 atriði
 
-        return tuple (2, 't.d.', 'til dæmis')
+        return [('Það', 'Það'), ('voru', 'voru'), ('t.d.', 'til dæmis'), ('5', '5), ('atriði', 'atriði')]
         :param prenorm_sent:
         :param sent:
         :return:
@@ -33,20 +33,19 @@ class Normalizer:
         norm_tuples = []
         prenorm_arr = prenorm_sent.split()
         sent_arr = sent.split()
-        prenorm_sent_ind = 0
+        j = 0
         for i in range(len(sent_arr)):
-            if prenorm_arr[prenorm_sent_ind] == sent_arr[i]:
-                norm_tuples.append((sent_arr[i], prenorm_arr[prenorm_sent_ind]))
-                prenorm_sent_ind += 1
+            if prenorm_arr[j] == sent_arr[i]:
+                norm_tuples.append((sent_arr[i], prenorm_arr[j]))
+                j += 1
             else:
                 abbr = sent_arr[i]
-                expansion = prenorm_arr[prenorm_sent_ind]
-                j = prenorm_sent_ind + 1
+                expansion = prenorm_arr[j]
+                j += 1
                 while sent_arr[i + 1] != prenorm_arr[j]:
                     expansion += ' ' + prenorm_arr[j]
                     j += 1
                 norm_tuples.append((abbr, expansion))
-                prenorm_sent_ind = j
 
         return norm_tuples
 
@@ -102,7 +101,7 @@ class Normalizer:
         """
         This method returns a list of tuples where each tuple contains the original token from 'text' and the
         normalized version of the token.
-        If 'text' consists of multiple sentences, the result will be a list of list of tuples, where each outer list
+        If 'text' consists of multiple sentences, the result will be a list of list of tuples, where each inner list
         represents one sentence.
 
         Example:
