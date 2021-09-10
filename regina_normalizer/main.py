@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import argparse
 
 from tokenizer import split_into_sentences
 from regina_normalizer import pos_tagger
@@ -129,11 +130,25 @@ class Normalizer:
         return res
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_text", help="a text to normalize")
+    parser.add_argument("-d", "--domain", default="other", help="the domain of the input text, 'sport' or 'other'")
+    parser.add_argument("-f", "--format", default="norm", help="the format of the output, 'plain' or 'tokens'")
+    args = parser.parse_args()
+    return args
+
+
 def main():
-    input = "Það voru e.t.v. 55 km eftir"
-    domain = ""
+    cmdline_args = parse_arguments()
+    input = cmdline_args.input_text
+    domain = cmdline_args.domain
+    format = cmdline_args.format
     normalizer = Normalizer()
-    print(normalizer.normalize_tokenwise(input, domain))
+    if format == "plain":
+        print(normalizer.normalize(input, domain))
+    elif format == "tokens":
+        print(normalizer.normalize_tokenwise(input, domain))
 
 
 if __name__ == '__main__':

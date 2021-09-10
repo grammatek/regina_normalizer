@@ -1,34 +1,42 @@
-## Prerequisites
+# Text normalization for TTS for Icelandic
 
-`pip install git+https://github.com/cadia-lvl/POS.git@v3.0.0`
+__This repository was forked from Reykjavik University, [LVL]: https://github.com/cadia-lvl/regina_normalizer__
 
-`pip install tokenizer`
+__regina_normalizer__ is a normalization system based on regular expressions. It's core functionality is to expand digits, symbols and abbreviations contained in an input text so that it can be converted to phoneme representation and then read by a speech synthesizer.
 
-## To run in notebook
+# Setup
+* Clone the repository
+* Install requirements (preferably in a virtual environment)
+* Run `pip install -e .` from the root directory
 
-Run the import cells in `regina-notebook.ipynb` and then run `run_sentence(input, domain)` for an input sentence, the domain can be 'sport' or 'other'.
+To try the normalization out from the command line:
 
-## To run in command line (not recommended because the tagger has to be initialized for each sentence)
-
-Clone the directory, it should be named regina_normalizer (change from regina_normalizer-main if needed).
-
-Put the tagger file (named ‘tagger-v2.0.0.pt’ inside the inner regina_normalizer folder, which includes the code)
-
-Run `pip install -e .` inside the folder which contains `setup.py`
-
-Run `pytest test` for tests from the same place.
-
-For normalization, run:
-
-`python3 -W ignore -m regina_normalizer.main {sentence-to-be-normalized} {domain}`
+`python3 regina_normalizer/main.py {sentence-to-be-normalized}`
 
 for example
 
-`python3 -W ignore -m regina_normalizer.main "10.010.000 kr aukalega" other`
+`python3 regina_normalizer/main.py "10.010.000 kr aukalega"`
 
-tíu milljónir og tíu þúsund krónur aukalega 
+output:
 
-`python3 -W ignore -m regina_normalizer.main "Leikurinn for 3 - 2" sport`
+`[['tíu milljónir og tíu þúsund krónur aukalega']]` 
 
-Leikurinn for  þrjú  tvö 
+Two additional arguments can be given to the command line interface: `-d` for __domain__ and `-f` for __format__.
+The normalizer has a special processing for domain "sport", but the default domain is "other", i.e. no special treatment for the input. The default format argument is "plain", returning a list of normalized sentences from the input (see example above). Using `-f "tokens"` returns a list of tuples, where one can see how each token was normalized:
+
+`python3 regina_normalizer/main.py "Það eru 54 km eftir. Kostar þetta 1263 kr?" -f "tokens"` 
+
+output: 
+
+`[[('Það', 'Það'), ('eru', 'eru'), ('54', ' fimmtíu og fjórir'), ('km', 'kílómetrar'), ('eftir', 'eftir'), ('.', '.')], [('Kostar', 'Kostar'), ('þetta', 'þetta'), ('1263', ' tólf hundruð sextíu og þrjár'), ('kr', 'krónur'), ('?', '?')]]`
+
+# License
+[Apache v2.0](LICENSE)
+
+# Authors
+- Anna Björk Nikulásdóttir [email](anna@grammatek.com) (this fork)
+- Helga Svala Sigurðardóttir, Reykjavík University (original regina_normalizer)
+
+# Acknowledgements
+This project, both the original regina_normalizer and this derivative, is funded by the Language Technology Programme for Icelandic 2019-2023. The programme, which is managed and coordinated by [Almannarómur](https://almannaromur.is/), is funded by the Icelandic Ministry of Education, Science and Culture.
 
