@@ -2,7 +2,7 @@
 
 __This repository was forked from Reykjavik University, [LVL]: https://github.com/cadia-lvl/regina_normalizer__
 
-__regina_normalizer__ is a normalization system based on regular expressions. It's core functionality is to expand digits, symbols and abbreviations contained in an input text so that it can be converted to phoneme representation and then read by a speech synthesizer.
+__regina_normalizer__ is a normalization system based on regular expressions. Its core functionality is to expand digits, symbols and abbreviations contained in an input text so that it can be converted to phoneme representation and then read by a speech synthesizer.
 
 # Setup
 * Clone the repository
