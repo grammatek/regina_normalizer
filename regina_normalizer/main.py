@@ -7,6 +7,7 @@ from tokenizer import split_into_sentences
 from regina_normalizer import pos_tagger
 from regina_normalizer import abbr_functions as af
 from regina_normalizer import number_functions as nf
+from regina_normalizer import unicode_normalizer as un
 
 
 class Normalizer:
@@ -93,6 +94,7 @@ class Normalizer:
         """
         res = []
         for sent in split_into_sentences(text):
+            sent = un.normalize_encoding(sent)
             sent = af.replace_abbreviations(sent, domain)
             normalized = nf.handle_sentence(sent, domain, self.tagger).strip()
             res.append([normalized])
