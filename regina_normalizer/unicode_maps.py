@@ -1,4 +1,3 @@
-
 """
  This class holds different maps, containing unicode character encodings and their respective
  replacement for the unicode cleaning of raw text see unicode_normalizer.
@@ -200,20 +199,47 @@ diverse_substitutions = {
 unified_dictionary = {**insert_space_map, **diverse_substitutions, **arabic_alphabet, **greek_alphabet,
                       **hebrew_alphabet, **cyrillic_alphabet, **ipa_map}
 
+# if those characters are found in normalized words not contained in the pronunciation dictionary,
+# we need to replace them with characters from the Icelandic alphabet
+post_dict_lookup = {
+    'c': "k",  # TODO: can we contextualize this?
+    'w': "v",
+    'z': "s",
+    'q': "k",
+    'å': "o",
+    'ä': "e",
+    'ü': "u",
+    'ø': "ö",
+    'ć': "ts",  # polish
+    'ę': "e",
+    'ł': "ú",  # polish, like English 'w' in 'will'
+    'ń': "n",
+    'ś': "s",
+    'ß': "ss",
+    'ź': "s",
+    'ż': "s",
+    'C': "K",  # TODO: can we contextualize this?
+    'W': "V",
+    'Z': "S",
+    'Q': "K",
+    'Å': "O",
+    'Ä': "E",
+    'Ü': "U",
+    'Ø': "Ö",
+}
+
 characters_out_of_range_to_keep = [
     '\u20a4',  # Lira sign
     '\u20ac'  # Euro sign
 ]
 
-combining_grave_accent = '\u0300'  #  ̀
+combining_grave_accent = '\u0300'  # ̀
 combining_acute_accent = '\u0301'  # ´ as in á,é, ...
-combining_circumflex_accent = '\u0302'  #  ̂
-combining_tilde = '\u0303'  #  ̃
-combining_macron = '\u0304'  #  ̄
-combining_overline = '\u0305'  #  ̅
-combining_breve = '\u0306'  #  ̆
-combining_dot_above = '\u0307'  #  ̇
-combining_diaeresis = '\u0308'  #  ¨ as in ä, ü, ...
+combining_circumflex_accent = '\u0302'  # ̂
+combining_tilde = '\u0303'  # ̃
+combining_macron = '\u0304'  # ̄
+combining_overline = '\u0305'  # ̅
+combining_breve = '\u0306'  # ̆
+combining_dot_above = '\u0307'  # ̇
+combining_diaeresis = '\u0308'  # ¨ as in ä, ü, ...
 # etc. upto u0362 all kinds of "combining" characters
-
-

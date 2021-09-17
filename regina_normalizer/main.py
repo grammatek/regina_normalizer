@@ -5,6 +5,7 @@ import argparse
 
 from tokenizer import split_into_sentences
 from regina_normalizer import pos_tagger
+from regina_normalizer import dict_data
 from regina_normalizer import abbr_functions as af
 from regina_normalizer import number_functions as nf
 from regina_normalizer import unicode_normalizer as un
@@ -19,6 +20,7 @@ class Normalizer:
 
     def __init__(self):
         self.tagger = pos_tagger.POSTagger.get_tagger()
+        self.pron_dict = dict_data.PronDict.get_lexicon()
 
     def extract_prenorm_tuples(self, prenorm_sent, sent):
         """
