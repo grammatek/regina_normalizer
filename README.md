@@ -28,7 +28,9 @@ The normalizer has a special processing for domain "sport", but the default doma
 
 output: 
 
-`[[('Það', 'Það'), ('eru', 'eru'), ('54', ' fimmtíu og fjórir'), ('km', 'kílómetrar'), ('eftir', 'eftir'), ('.', '.')], [('Kostar', 'Kostar'), ('þetta', 'þetta'), ('1263', ' tólf hundruð sextíu og þrjár'), ('kr', 'krónur'), ('?', '?')]]`
+`[[('Það', 'það'), ('eru', 'eru'), ('54', ' fimmtíu og fjórir'), ('km', 'kílómetrar'), ('eftir', 'eftir'), ('.', '.')], [('kostar', 'kostar'), ('þetta', 'þetta'), ('1263', ' tólf hundruð sextíu og þrjár'), ('kr', 'krónur'), ('?', '?')]]`
+
+Note that all ouptut is lowercased.
 
 # License
 [Apache v2.0](LICENSE)
