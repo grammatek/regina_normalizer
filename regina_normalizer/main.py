@@ -99,7 +99,8 @@ class Normalizer:
             sent = un.normalize_encoding(sent)
             sent = af.replace_abbreviations(sent, domain)
             normalized = nf.handle_sentence(sent, domain, self.tagger).strip()
-            res.append([normalized])
+            final_sent = un.normalize_alphabet(normalized)
+            res.append(final_sent)
 
         return res
 
@@ -120,7 +121,7 @@ class Normalizer:
         """
         res = []
         for sent in split_into_sentences(text):
-            # first step is to replace abbreviations
+            sent = un.normalize_encoding(sent)
             prenorm_sent = af.replace_abbreviations(sent, domain)
             # normalized_tuples contain the final normalized sentence as the second element of each tuple
             normalized_tuples = nf.handle_sentence_tokenwise(prenorm_sent, domain, self.tagger)
@@ -129,6 +130,7 @@ class Normalizer:
                 prenorm_tuples = self.extract_prenorm_tuples(prenorm_sent, sent)
                 normalized_tuples = self.merge_tuples(normalized_tuples, prenorm_tuples)
 
+            normalized_tuples = un.normalize_alphabet_from_tuples(normalized_tuples)
             res.append(normalized_tuples)
 
         return res

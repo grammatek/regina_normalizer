@@ -81,7 +81,7 @@ def normalize_alphabet(sentences):
                             token = token.replace(char, ",")
                         # we want to keep punctuation marks still present in the normalized
                         # string, but delete the unknown character otherwise
-                        elif char not in ['.,:!?']:
+                        elif char not in ['.',',',':','!','?']:
                             token = token.replace(char, "")
 
             # we restore the original string with valid words / characters only
@@ -91,6 +91,23 @@ def normalize_alphabet(sentences):
         normalized_sentences.append(norm_sent.lower().strip())
 
     return normalized_sentences
+
+
+def normalize_alphabet_from_tuples(normalized_tuples):
+    """
+    For normalization requests that require the return value to be a list of tuples perserving the original tokens,
+    this method hands the normalized tokens over to the normalize_alphabet method and returns the tuple list
+    with the alphabet-normalized tokens.
+
+    :param normalized_tuples: pairs of original tokens with their normalization
+    :return: same list of tuples as the input, where the normalized tokens have been run through alpahbet-normalizing
+    """
+    new_tuple_list = []
+    for tuple in normalized_tuples:
+        final_norm = normalize_alphabet(tuple[1])
+        new_tuple_list.append((tuple[0], final_norm[0]))
+
+    return new_tuple_list
 
 
 def main():

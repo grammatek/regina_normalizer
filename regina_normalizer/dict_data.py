@@ -1,10 +1,10 @@
 import logging
-
+from pathlib import Path
 class PronDict:
 
     lexicon = None
 
-    def __init__(self, lexicon_file='regina_normalizer/data/lexicon.txt'):
+    def __init__(self, lexicon_file='data/lexicon.txt'):
         """
         Initialize the lexicon containing the words from the pronunciation dictionary
         :param lexicon_file: path to lexicon file
