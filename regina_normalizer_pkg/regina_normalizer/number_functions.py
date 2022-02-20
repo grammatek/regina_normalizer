@@ -169,7 +169,10 @@ def handle_sentence(sent, domain):
     sentsplit = sent.split()
     tagsent = tagger.tag_sent(sentsplit)
     split_zip = list(zip(sentsplit, list(tagsent[1:]) + [""]))
+    res_tuples = []
+    tag_counter = 0
     for word, nexttag in split_zip:
+        orig_word = word
         if re.match("[\d½⅓¼⅔¾\-\–]", word):
             word = number_findall(word, nexttag, domain)
         if re.match(nh.roman_letters_ptrn, word):
@@ -179,9 +182,13 @@ def handle_sentence(sent, domain):
         elif re.match(ap.link_ptrn_all, word):
             word = wlink_fun(word)
         elif re.match(symb_ptrn, word):
-            word = af.replace_all(word, symb_dict, symb_ptrn)
+            word_arr = af.replace_all(word, symb_dict, symb_ptrn)
+            word = ' '.join(word_arr)
         returnsent += word + " "
-    return returnsent
+        res_tuples.append((orig_word, word, tagsent[tag_counter]))
+        tag_counter += 1
+    #return returnsent
+    return res_tuples
 
 
 

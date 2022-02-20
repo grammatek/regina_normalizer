@@ -1,4 +1,6 @@
 import re
+import difflib
+from typing import Tuple
 import json
 import os
 
@@ -34,12 +36,44 @@ volume_dict = vd.make_volume_dict()
 weight_dict = wd.make_weight_dict()
 symb_dict = sd.symb_dict
 
-# replace words according to the appropriate dictionary 
-def replace_all(text, dic, ptrn=""):
+
+def replace_in_list(token_list: list, token: str, replacement: str) -> list:
+    """Replace all occurrences of 'token' with 'replacement' in the 'token_list'"""
+    return [replacement if item == token else item for item in token_list]
+
+
+def get_replacement(orig_text: str, replacement_text: str) -> Tuple[str, str]:
+    """ Find the difference between the two input strings and extract the corresponding tokens.
+    Return both tokens. """
+    diff = difflib.ndiff(orig_text.split(' '), replacement_text.split(' '))
+    to_replace = ''
+    replacement = ''
+    for d in diff:
+        if d.startswith('-'):
+            to_replace = d.split(' ')[1]
+        elif d.startswith('+'):
+            replacement = d.split(' ')[1]
+    return to_replace, replacement
+
+
+def replace_all(text: str, dic: dict, ptrn="") -> list:
+    """ Replace words according to the appropriate dictionary.
+    Return a list of tuples, containing original tokens and replacements."""
+
+    original_list = text.split(' ')
+    replaced_list = text.split(' ')
+    zipped_result = zip(original_list, replaced_list)
     if re.findall(ptrn, text):
         for i, j in dic.items():
-            text = re.sub(i, j, text)
-    return text
+            if re.findall(i, text):
+                sub_text = re.sub(i, j, text)
+                to_replace, replacement = get_replacement(text, sub_text)
+                replaced_list = replace_in_list(replaced_list, to_replace, replacement)
+                text = sub_text
+        zipped_result = zip(original_list, replaced_list)
+    result_list = list(zipped_result)
+    return replaced_list
+
 
 # replace words according to the appropriate domain 
 def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
@@ -54,22 +88,24 @@ def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
         except:
             pass
         finalstring += splitsent[i] + " "
-    return finalstring
+    #return finalstring
+    return splitsent
 
 def replace_abbreviations(sent, domain):
-    sent = replace_all(sent, direction_dict, direction_ptrn)
-    sent = replace_all(sent, pre_help_dict)
-    sent = replace_all(sent, denominator_dict, "\/")
-    sent = replace_all(sent, weight_dict, wd.weight_ptrn)
-    sent = replace_all(sent, distance_dict, dd.distance_ptrn)
-    sent = replace_all(sent, area_dict, ad.area_ptrn)
-    sent = replace_all(sent, volume_dict, vd.volume_ptrn)
-    sent = replace_all(sent, time_dict, td.time_ptrn)
-    sent = replace_all(sent, currency_dict, cd.currency_ptrn)
-    sent = replace_all(sent, electronic_dict, ed.electronic_ptrn)
-    sent = replace_all(sent, rest_dict, rd.rest_ptrn) 
-    sent = replace_all(sent, period_dict, pd.period_ptrn)
-    sent = replace_all(sent, abbr_dict)
-    sent = replace_domain(sent.split(), domain)
-    return sent
+    original_list = sent.split(' ')
+    sent_list = replace_all(sent, direction_dict, direction_ptrn)
+    sent_list = replace_all(' '.join(sent_list), pre_help_dict)
+    sent_list = replace_all(' '.join(sent_list), denominator_dict, "\/")
+    sent_list = replace_all(' '.join(sent_list), weight_dict, wd.weight_ptrn)
+    sent_list = replace_all(' '.join(sent_list), distance_dict, dd.distance_ptrn)
+    sent_list = replace_all(' '.join(sent_list), area_dict, ad.area_ptrn)
+    sent_list = replace_all(' '.join(sent_list), volume_dict, vd.volume_ptrn)
+    sent_list = replace_all(' '.join(sent_list), time_dict, td.time_ptrn)
+    sent_list = replace_all(' '.join(sent_list), currency_dict, cd.currency_ptrn)
+    sent_list = replace_all(' '.join(sent_list), electronic_dict, ed.electronic_ptrn)
+    sent_list = replace_all(' '.join(sent_list), rest_dict, rd.rest_ptrn)
+    sent_list = replace_all(' '.join(sent_list), period_dict, pd.period_ptrn)
+    sent_list = replace_all(' '.join(sent_list), abbr_dict)
+    sent_list = replace_domain(sent_list, domain)
+    return list(zip(original_list, sent_list))
 
