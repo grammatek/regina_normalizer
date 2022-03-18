@@ -37,9 +37,30 @@ weight_dict = wd.make_weight_dict()
 symb_dict = sd.symb_dict
 
 
-def replace_in_list(token_list: list, token: str, replacement: str) -> list:
+class Normalized:
+
+    def __init__(self, original: str, ind: int, start: int, end: int):
+        self.original_token = original
+        self.index = ind
+        self.span_start = start
+        self.span_end = end
+        self.normalized = ''
+
+
+def replace_in_list(token_list: list, original_list: list, token: str, replacement: str) -> list:
     """Replace all occurrences of 'token' with 'replacement' in the 'token_list'"""
-    return [replacement if item == token else item for item in token_list]
+
+    #replaced_list = [replacement if item == token else item for item in token_list]
+    replaced_list = []
+    zipped_list = []
+    for ind, item in enumerate(token_list):
+        if item == token:
+            replaced_list.append(replacement)
+            zipped_list.append((original_list[ind], replacement))
+        else:
+            replaced_list.append(item)
+            zipped_list.append((original_list[ind], item))
+    return replaced_list, zipped_list
 
 
 def get_replacement(orig_text: str, replacement_text: str) -> Tuple[str, str]:
@@ -50,37 +71,53 @@ def get_replacement(orig_text: str, replacement_text: str) -> Tuple[str, str]:
     replacement = ''
     for d in diff:
         if d.startswith('-'):
-            to_replace = d.split(' ')[1]
+            to_replace += ' ' + d.split(' ')[1]
         elif d.startswith('+'):
-            replacement = d.split(' ')[1]
-    return to_replace, replacement
+            replacement += ' ' + d.split(' ')[1]
+    return to_replace.strip(), replacement.strip()
 
 
-def replace_all(text: str, dic: dict, ptrn="") -> list:
+def replace_all_old(current_sent: list, original_list: list, dic: dict, ptrn="") -> list:
     """ Replace words according to the appropriate dictionary.
     Return a list of tuples, containing original tokens and replacements."""
 
-    original_list = text.split(' ')
-    replaced_list = text.split(' ')
-    zipped_result = zip(original_list, replaced_list)
+    replaced_list = current_sent
+    #current_text = ' '.join(current_sent)
+    current_text = ''
+    for tok in current_sent:
+        current_text += tok.normalized_token + ' '
+
+    zipped_result = zip(current_sent, replaced_list)
+    if re.findall(ptrn, current_text):
+        for i, j in dic.items():
+            indices = re.finditer(i, current_text)
+            if indices:
+                sub_text = re.sub(i, j, current_text)
+                to_replace, replacement = get_replacement(current_text, sub_text)
+
+
+                #replaced_list = replace_in_list(replaced_list, to_replace, replacement)
+                replaced_list, zipped_result = replace_in_list(current_text.split(), original_list, to_replace, replacement)
+                current_text = sub_text
+        #zipped_result = zip(original_list, replaced_list)
+    result_list = list(zipped_result)
+    return result_list, replaced_list
+
+# replace words according to the appropriate dictionary
+def replace_all(text, dic, ptrn=""):
     if re.findall(ptrn, text):
         for i, j in dic.items():
-            if re.findall(i, text):
-                sub_text = re.sub(i, j, text)
-                to_replace, replacement = get_replacement(text, sub_text)
-                replaced_list = replace_in_list(replaced_list, to_replace, replacement)
-                text = sub_text
-        zipped_result = zip(original_list, replaced_list)
-    result_list = list(zipped_result)
-    return replaced_list
-
+            text = re.sub(i, j, text)
+    return text
 
 # replace words according to the appropriate domain 
 def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
     finalstring = ""
+    replacement_index = []
     for i in range(len(splitsent)):
         try:
             if re.match("\d", splitsent[i-1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
+                replacement_index.append(i)
                 if domain == 'sport':
                     splitsent[i] = ""
                 else:
@@ -90,22 +127,36 @@ def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
         finalstring += splitsent[i] + " "
     #return finalstring
     return splitsent
+    #return replacement_index
+
+
+def init_normalized(sent: str) -> list:
+    norm_list = []
+    sent_arr = sent.split()
+    char_counter = 0
+    for i, tok in enumerate(sent_arr):
+        start = sent.index(tok, char_counter)
+        norm_list.append(Normalized(tok, i, start, start+len(tok)))
+    return norm_list
+
 
 def replace_abbreviations(sent, domain):
-    original_list = sent.split(' ')
-    sent_list = replace_all(sent, direction_dict, direction_ptrn)
-    sent_list = replace_all(' '.join(sent_list), pre_help_dict)
-    sent_list = replace_all(' '.join(sent_list), denominator_dict, "\/")
-    sent_list = replace_all(' '.join(sent_list), weight_dict, wd.weight_ptrn)
-    sent_list = replace_all(' '.join(sent_list), distance_dict, dd.distance_ptrn)
-    sent_list = replace_all(' '.join(sent_list), area_dict, ad.area_ptrn)
-    sent_list = replace_all(' '.join(sent_list), volume_dict, vd.volume_ptrn)
-    sent_list = replace_all(' '.join(sent_list), time_dict, td.time_ptrn)
-    sent_list = replace_all(' '.join(sent_list), currency_dict, cd.currency_ptrn)
-    sent_list = replace_all(' '.join(sent_list), electronic_dict, ed.electronic_ptrn)
-    sent_list = replace_all(' '.join(sent_list), rest_dict, rd.rest_ptrn)
-    sent_list = replace_all(' '.join(sent_list), period_dict, pd.period_ptrn)
-    sent_list = replace_all(' '.join(sent_list), abbr_dict)
-    sent_list = replace_domain(sent_list, domain)
-    return list(zip(original_list, sent_list))
+    norm_list = init_normalized(sent)
+
+    sent = replace_all(sent, direction_dict, direction_ptrn)
+    sent = replace_all(sent, pre_help_dict)
+    sent = replace_all(sent, denominator_dict, "\/")
+    sent = replace_all(sent, weight_dict, wd.weight_ptrn)
+    sent = replace_all(sent, distance_dict, dd.distance_ptrn)
+    sent = replace_all(sent, area_dict, ad.area_ptrn)
+    sent = replace_all(sent, volume_dict, vd.volume_ptrn)
+    sent = replace_all(sent, time_dict, td.time_ptrn)
+    sent = replace_all(sent, currency_dict, cd.currency_ptrn)
+    sent = replace_all(sent, electronic_dict, ed.electronic_ptrn)
+    sent = replace_all(sent, rest_dict, rd.rest_ptrn)
+    sent = replace_all(sent, period_dict, pd.period_ptrn)
+    sent = replace_all(sent, abbr_dict)
+    sent = replace_domain(sent.split(), domain)
+    return sent
+
 

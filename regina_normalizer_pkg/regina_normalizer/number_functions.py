@@ -182,8 +182,7 @@ def handle_sentence(sent, domain):
         elif re.match(ap.link_ptrn_all, word):
             word = wlink_fun(word)
         elif re.match(symb_ptrn, word):
-            word_arr = af.replace_all(word, symb_dict, symb_ptrn)
-            word = ' '.join(word_arr)
+            word = af.replace_all(word, symb_dict, symb_ptrn)
         returnsent += word + " "
         res_tuples.append((orig_word, word, tagsent[tag_counter]))
         tag_counter += 1
