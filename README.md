@@ -31,7 +31,7 @@ output:
 `[[('Það', 'Það'), ('eru', 'eru'), ('54', ' fimmtíu og fjórir'), ('km', 'kílómetrar'), ('eftir', 'eftir'), ('.', '.')], [('Kostar', 'Kostar'), ('þetta', 'þetta'), ('1263', ' tólf hundruð sextíu og þrjár'), ('kr', 'krónur'), ('?', '?')]]`
 
 # License
-[Apache v2.0](LICENSE)
+[MIT](LICENSE)
 
 # Authors
 - Anna Björk Nikulásdóttir [email](anna@grammatek.com) (this fork)
@@ -39,4 +39,3 @@ output:
 
 # Acknowledgements
 This project, both the original regina_normalizer and this derivative, is funded by the Language Technology Programme for Icelandic 2019-2023. The programme, which is managed and coordinated by [Almannarómur](https://almannaromur.is/), is funded by the Icelandic Ministry of Education, Science and Culture.
-

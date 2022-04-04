@@ -55,29 +55,13 @@ def fill_dict(word, tag, tuples, type_dict, cols):
     tmpword = ""
     for i in range(len(tuples)):
         if re.findall(tuples[i][0], word) and re.findall(tuples[i][1], tag):
-            #print("HVAÐ ER Í GANGI")
             try:
-                #print("förum við hingað inn?")
-                #print(type_dict[word][tuples[i][2]])
                 type_dict[word][tuples[i][2]] = tuples[i][3]
-                #type_dict[word][tuples][i][4] += 1
-                print(type_dict[word][tuples][i][4])
-                tuples[i][4] = 18
-                print(tuples[i])
-                #print(type_dict[word][tuples[i][2]])
-                #tuples[i][4] += 1
-                #print(tuples[i])
-                #print(tuples[i][4])
-               #print(tuples[i][4])
-                #tuples[i].update({tuples[i][4]: 0+1})
-                #print(tuples[i])
             except:
-                #print("en hingað?")
                 pass
-            #print(tuples[i])
     for col in cols:
         tmpword += type_dict[word][col]
-    return tmpword            
+    return tmpword           
 
 # Expand the digits, the expansion of digit_numbers is in number_help
 def digit_fun(substr):
@@ -98,6 +82,24 @@ def wlink_fun(text, ptrn=ap.link_ptrn_all):
         for symbol, word in nh.wlink_numbers:
             substr = re.sub(symbol, word, substr)
         return substr
+
+# replace words according to the appropriate domain 
+def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
+    dashsent = []
+    for i in range(len(splitsent)):
+        try:
+            if re.match("\d", splitsent[i-1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
+                if domain == 'sport':
+                    splitsent[i] = ""
+                else:
+                    splitsent[i] = "til"
+        except:
+            pass
+        if splitsent[i] != "":
+            dashsent.append(splitsent[i])
+        else:
+            pass
+    return dashsent
 
 # Fill in the number appropriately based on pattern
 def number_findall(word, tag, domain):
@@ -140,9 +142,11 @@ def number_findall(word, tag, domain):
 
     elif re.findall(nh.fraction_ptrn, word):
         if domain == 'other' or re.findall("½|⅓|⅔|¼|¾", word):
+            # TODO: this does not solve patterns like '2021/2022' correctly (result: 'og hálfur')
             fraction_dict = make_dict(word, nh.decimal_cols_thousand)
             tmpword = fill_dict(word, tag, fraction_tuples, fraction_dict, nh.decimal_cols_thousand)
         elif domain == 'sport':
+            # TODO: this does not handle all patterns matched, only \d{1,2}/\d{1,2}!
             sport_dict = make_dict(word, nh.time_sport_cols)
             tmpword = fill_dict(word, tag, sport_tuples, sport_dict, nh.time_sport_cols)
      
@@ -157,8 +161,9 @@ def number_findall(word, tag, domain):
 def handle_sentence(sent, domain, tagger):
     returnsent = ""
     sentsplit = sent.split()
-    tagsent = tagger.tag_sent(sentsplit)
-    split_zip = list(zip(sentsplit, list(tagsent[1:]) + [""]))
+    dashsent = replace_domain(sentsplit, domain)
+    tagsent = tagger.tag_sent(dashsent)
+    split_zip = list(zip(dashsent, list(tagsent[1:]) + [""]))
     for word, nexttag in split_zip:
         if re.match("[\d½⅓¼⅔¾\-\–]", word):
             word = number_findall(word, nexttag, domain)

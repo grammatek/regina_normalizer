@@ -41,21 +41,6 @@ def replace_all(text, dic, ptrn=""):
             text = re.sub(i, j, text)
     return text
 
-# replace words according to the appropriate domain 
-def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
-    finalstring = ""
-    for i in range(len(splitsent)):
-        try:
-            if re.match("\d", splitsent[i-1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
-                if domain == 'sport':
-                    splitsent[i] = ""
-                else:
-                    splitsent[i] = "til"
-        except:
-            pass
-        finalstring += splitsent[i] + " "
-    return finalstring
-
 def replace_abbreviations(sent, domain):
     sent = replace_all(sent, direction_dict, direction_ptrn)
     sent = replace_all(sent, pre_help_dict)
@@ -70,6 +55,12 @@ def replace_abbreviations(sent, domain):
     sent = replace_all(sent, rest_dict, rd.rest_ptrn) 
     sent = replace_all(sent, period_dict, pd.period_ptrn)
     sent = replace_all(sent, abbr_dict)
-    sent = replace_domain(sent.split(), domain)
+    if domain == 'other':
+        sent = re.sub('(\W|^)(\d{1,3})(\/)(0|\d{1}\d+)(\W|$)', '\g<1>\g<2> \g<3> \g<4>\g<5>', sent)
+        sent = re.sub('(\W|^)(\d{3}\d+)(\/)(\d+)(\W|$)', '\g<1>\g<2> \g<3> \g<4>\g<5>', sent)
+    if domain == 'sport':
+        sent = re.sub('(W|^)(\d{2}\d+)(\/)(\d+)(\W|$)', '\g<1>\g<2> \g<3> \g<4>\g<5>', sent)
+        sent = re.sub('(W|^)(\d+)(\/)(\d{2}\d+)(\W|$)', '\g<1>\g<2> \g<3> \g<4>\g<5>', sent)
     return sent
+
 
