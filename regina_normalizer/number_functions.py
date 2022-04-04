@@ -3,8 +3,6 @@ import re
 import sys
 import os
 
-from tokenizer import split_into_sentences
-
 from . import number_help as nh 
 
 from . import abbr_patterns as ap

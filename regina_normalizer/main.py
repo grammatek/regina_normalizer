@@ -2,8 +2,9 @@
 
 import sys
 import argparse
+import re
 
-from tokenizer import split_into_sentences
+from tokenizer import Tokenizer
 from regina_normalizer import pos_tagger
 from regina_normalizer import abbr_functions as af
 from regina_normalizer import number_functions as nf
@@ -17,6 +18,7 @@ class Normalizer:
     """
 
     def __init__(self):
+        self.tokenizer = Tokenizer()
         self.tagger = pos_tagger.POSTagger.get_tagger()
 
     def extract_prenorm_tuples(self, prenorm_sent, sent):
@@ -92,7 +94,7 @@ class Normalizer:
         :return: normalized version of text
         """
         res = []
-        for sent in split_into_sentences(text):
+        for sent in self.tokenizer.detect_sentences(text):
             sent = af.replace_abbreviations(sent, domain)
             normalized = nf.handle_sentence(sent, domain, self.tagger).strip()
             res.append([normalized])
@@ -115,7 +117,7 @@ class Normalizer:
         :return:
         """
         res = []
-        for sent in split_into_sentences(text):
+        for sent in self.tokenizer.detect_sentences(text):
             # first step is to replace abbreviations
             prenorm_sent = af.replace_abbreviations(sent, domain)
             # normalized_tuples contain the final normalized sentence as the second element of each tuple
