@@ -230,13 +230,10 @@ def parse_arguments():
 
 
 def main():
-    #cmdline_args = parse_arguments()
-    #input_text = cmdline_args.input_text
-    #domain = cmdline_args.domain
-    #output_format = cmdline_args.format
-    input_text = 'hann hefði sagt t.d. 570 2451 í gær'
-    output_format = 'tokens'
-    domain = 'other'
+    cmdline_args = parse_arguments()
+    input_text = cmdline_args.input_text
+    domain = cmdline_args.domain
+    output_format = cmdline_args.format
     normalizer = Normalizer()
     if output_format == "plain":
         print(normalizer.normalize(input_text, domain))
