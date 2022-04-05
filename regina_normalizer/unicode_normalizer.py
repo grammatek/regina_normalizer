@@ -81,7 +81,7 @@ def normalize_alphabet(sentences):
                             token = token.replace(char, ",")
                         # we want to keep punctuation marks still present in the normalized
                         # string, but delete the unknown character otherwise
-                        elif char not in ['.',',',':','!','?']:
+                        elif char not in ['.',',',':','!','?', '<', '>']:
                             token = token.replace(char, "")
 
             # we restore the original string with valid words / characters only
