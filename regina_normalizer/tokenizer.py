@@ -118,6 +118,10 @@ class Tokenizer:
         """ Finish a sentence, take a look if the tmp_string content has a correct
         sentence ending, if not, add a ' .' to the sentence and return."""
         tmp_string += token.strip()
+        # at the end of a sentence we detach the final dot from the last token
+        # TODO: might not always be feasible?
+        if re.search('[^\\s]\\.$', tmp_string):
+            tmp_string = tmp_string[:-1] + ' .'
        # if not tmp_string.endswith(' .') and not tmp_string.endswith(' . \"'):
        #     tmp_string = tmp_string[:-1] + ' .'
         return tmp_string
@@ -235,7 +239,7 @@ class Tokenizer:
 
 
 def main():
-    input_text = 'hvort viltu fjórða, fimmta eða sjötta valkostinn?'
+    input_text = 'hún verður 2ja ára í sumar :)'
     tokenizer = Tokenizer()
     sentences = tokenizer.detect_sentences(input_text)
     for sent in sentences:

@@ -128,12 +128,12 @@ class Normalizer:
         normalization (correct or not) in the final tuple list.
 
         Example of an erroneous input (the pre normalization added a '5' in the wrong place - this bug is fixed but there might be more ...):
-        pre_tuples: [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna'), ('fullorðna'), ('kr.', '5 krónur'), ('5500', '5500')]
-        norm_tuples: [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna'), ('fullorðna'), ('5', 'fimm'), ('krónur', 'krónur'),
+        pre_tuples: [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna', 'fullorðna'), ('kr.', '5 krónur'), ('5500', '5500')]
+        norm_tuples: [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna', 'fullorðna'), ('5', 'fimm'), ('krónur', 'krónur'),
             ('5500', 'fimm þúsund og fimm hundruð')]
 
         desired output:
-        [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna'), ('fullorðna'), ('kr.', 'fimm krónur'),
+        [('Miðaverð', 'Miðaverð'), ('fyrir', 'fyrir'), ('fullorðna', 'fullorðna'), ('kr.', 'fimm krónur'),
             ('5500', 'fimm þúsund og fimm hundruð')]
 
         :param norm_tuples: result of second step of normalization (handle_sentence_tokenwise())
