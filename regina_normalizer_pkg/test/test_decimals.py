@@ -1,11 +1,30 @@
 
-from regina_normalizer import regina as r
-import pytest
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import abbr_functions
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import number_functions
 import re
 
 
 def normalize(sent, domain):
-    return r.handle_input(sent, domain)
+    pre_norm = abbr_functions.replace_abbreviations(sent, domain)
+    normalized = number_functions.handle_sentence(' '.join(pre_norm), domain)
+    result = []
+    for tup in normalized:
+        if len(tup) == 3:
+            result.append(tup[1])
+    return ' '.join(result)
+
+# TODO: implement fixes for those tests:
+"""
+def test_formatted_numbers():
+    assert re.sub("\s+", " ",
+                  normalize('75', 'other').strip()) == 'sjötíu og fimm'
+    assert re.sub("\s+", " ",
+                  normalize('4,75 %', 'other').strip()) == 'fjögur komma sjötíu og fimm prósent'
+    assert re.sub("\s+", " ",
+                  normalize('5,14 mínútur', 'other').strip()) == 'fimm komma fjórtán mínútur'
+    assert re.sub("\s+", " ",
+                  normalize('synti á 1:09,14 mínútu', 'other').strip()) == 'synti á einni núll níu komma fjórtán mínútu'
+"""
 
 def test_decimal_thousands():
     assert re.sub("\s+", " ", normalize('ég fékk gjöf frá 10,1 vini', 'other').strip()) == 'ég fékk gjöf frá tíu komma einum vini'

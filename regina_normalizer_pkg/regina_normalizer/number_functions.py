@@ -48,53 +48,72 @@ sport_tuples = st.sport_tuples
 time_tuples = tt.time_tuples
 
 symb_dict = sd.symb_dict
-symb_ptrn = "[^A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö]"
+# Every thing that does not only contain alphabetic characters and spaces
+symb_ptrn = "[^A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö\s]"
 
-# Initializes a dict with the required columns (word parts) for each word
+
 def make_dict(word, type_cols):
+    """Create a dictionary with 'word' as key and a dictionary as value. The dictionary has each item
+    from 'type_cols' as keys and each key has an empty string as value. These values will be filled
+    during later processing steps, according to the number represented by 'word'.
+    'type_cols' typically contains a list of positions in a number, e.g. ['thousands', 'hundreds', 'dozens', ...]."""
     value_dict = {}
     value_dict[word] = {type_cols[0]: ""}
     for col in type_cols[1:]:
         value_dict[word].update({col: ""})
     return value_dict
 
+
 # Fill the dictionaries with values from appropriate number tuples
 # Example: word = 4, tuple = ("\d*4", "nvfn", "ones", "fjórar")
 # The number 4 followed by a feminine, plural, nominative noun becomes fjórar
-def fill_dict(word, tag, tuples, type_dict, cols):
-    tmpword = ""
+def fill_dict(word: str, pos_tag: str, tuples: list, type_dict: dict, cols: list):
+    """
+    Iterates over all tuples in 'tuples' and searches for a match for 'word' and 'pos_tag' in each tuple.
+    On a match, sets the value of the matching positional label in 'type_dict' to the verbalization in the matching tuple.
+
+    Example:
+    a match for word='10,1' and pos_tag='nkeþ' is found in a tuple (note that pos-tag does not matter for the number ten)
+    ('^((([1-9]((\\d{0,2}(\\.\\d{3})*\\.)|\\d*))\\d)|[1-9])?10((,\\d*)|(\\s1\\/2|\\s?(½|⅓|¼|⅔|¾)))?$', '.*', 'dozens', 'tíu'
+    the value for 'dozens' in the 'type_dict' will then be set to 'tíu'
+
+    :param word: the word representing the number to normalize
+    :param pos_tag: the part-of-speech tag of the next token
+    :param tuples: a (potentially very large) list of 4-tuples of the form: (digit_regex, pos_tag_regex, positional_label, verbalization)
+    :param type_dict: a dictionary as created in make_dict()
+    :param cols: a list of positional labels, the keys from the value dictionary in type_dict
+    :return: a string composed of all set values in type_dict
+    """
+    verbalization = ""
     for i in range(len(tuples)):
-        if re.findall(tuples[i][0], word) and re.findall(tuples[i][1], tag):
-            #print("HVAÐ ER Í GANGI")
+        if re.findall(tuples[i][0], word) and re.findall(tuples[i][1], pos_tag):
             try:
-                #print("förum við hingað inn?")
-                #print(type_dict[word][tuples[i][2]])
                 type_dict[word][tuples[i][2]] = tuples[i][3]
-                #type_dict[word][tuples][i][4] += 1
                 print(type_dict[word][tuples][i][4])
                 tuples[i][4] = 18
                 print(tuples[i])
-                #print(type_dict[word][tuples[i][2]])
-                #tuples[i][4] += 1
-                #print(tuples[i])
-                #print(tuples[i][4])
-               #print(tuples[i][4])
-                #tuples[i].update({tuples[i][4]: 0+1})
-                #print(tuples[i])
             except:
-                #print("en hingað?")
                 pass
-            #print(tuples[i])
     for col in cols:
-        tmpword += type_dict[word][col]
-    return tmpword            
+        verbalization += type_dict[word][col]
+    return verbalization
 
-# Expand the digits, the expansion of digit_numbers is in number_help
-def digit_fun(substr):
-    substr = re.sub(" ", "<sil> ", substr)
+
+def digit_fun(digit_str: str) -> str:
+    """
+    Resolve each single digit and symbol character by character, similar to
+    SSML <say-as interpret-as="characters">.
+    The following symbols are also resolved to a word representation (except '-' which is replaced by <sil>):
+    - + . : , / -> <sil>, plús, punktur, tvípunktur, komma, skástrik
+    See: number_help.digit_numbers
+
+    :param digit_str: a string containing digits and possibly selected symbols
+    :return: a string where digits and symbols have been replaced with their word representation
+    """
+    digit_str = re.sub(" ", "<sil> ", digit_str)
     for digit, word in nh.digit_numbers:
-        substr = re.sub(digit, word, substr)
-    return substr
+        digit_str = re.sub(digit, word, digit_str)
+    return digit_str
 
 # Expand the ordinal digits, the expansion of digits_ord is in number_help
 def digit_ord_fun(substr):
@@ -135,6 +154,12 @@ def number_findall(word, tag, domain):
     elif re.findall(nh.cardinal_big_ptrn, word):
         cardinal_big_dict = make_dict(word, nh.int_cols_big)
         tmpword = fill_dict(word, tag, cardinal_big_tuples, cardinal_big_dict, nh.int_cols_big)
+
+    # TODO: implement better verbalization of small decimal numbers (5,14 = fimm komma fjórtán, and not
+    # fimm komma einn fjórir). Compare to time
+    #elif re.findall(nh.decimal_small_ptrn, word):
+    #    decimal_thousand_dict = make_dict(word, nh.decimal_cols_small)
+    #    tmpword = fill_dict(word, tag, decimal_thousand_tuples, decimal_thousand_dict, nh.decimal_cols_small)
 
     elif re.findall(nh.decimal_thousand_ptrn, word):
         decimal_thousand_dict = make_dict(word, nh.decimal_cols_thousand)

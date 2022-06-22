@@ -1,13 +1,21 @@
-from regina_normalizer import regina as r
-import pytest
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import abbr_functions
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import number_functions
+
 import re
 
 
 def normalize(sent, domain):
-    return r.handle_input(sent, domain)
+    pre_norm = abbr_functions.replace_abbreviations(sent, domain)
+    normalized = number_functions.handle_sentence(' '.join(pre_norm), domain)
+    result = []
+    for tup in normalized:
+        if len(tup) == 3:
+            result.append(tup[1])
+    return ' '.join(result)
 
 def test_prehelp():
-    # masculine singular
+    assert re.sub("\s+", " ", normalize('í Evrópu EFTA-ríkin',
+                                        'other').strip()) == 'í Evrópu EFTA <sil> ríkin'
     assert re.sub("\s+", " ", normalize('hún verður 2ja ára næsta sumar :)', 'other').strip()) == 'hún verður tveggja ára næsta sumar :)'
     assert re.sub("\s+", " ", normalize('hann er 3ja ára', 'other').strip()) == 'hann er þriggja ára'
     assert re.sub("\s+", " ", normalize('hvort viltu 4ða, 5ta eða 6ta valkostinn?', 'other').strip()) == 'hvort viltu fjórða, fimmta eða sjötta valkostinn?'
@@ -19,6 +27,8 @@ def test_prehelp():
     assert re.sub("\s+", " ", normalize('símanúmerið er 697-3245', 'other').strip()) == 'símanúmerið er sex níu sjö <sil> þrír tveir fjórir fimm'
 
 def test_abbreviations():
+    assert re.sub("\s+", " ", normalize('Jón, f. 4. apríl 1927, d. 10. maí 2020',
+                                        'other').strip()) == 'Jón, fæddur fjórða apríl nítján hundruð tuttugu og sjö dáinn tíunda maí tvö þúsund og tuttugu'
     assert re.sub("\s+", " ", normalize('5. gr. , 4. mgr. , 6. nmgr.', 'other').strip()) == 'fimmta grein , fjórða málsgrein , sjötta neðanmálsgrein'
     assert re.sub("\s+", " ", normalize('Innsk. blm. árið 45 f.o.t. eða f.Kr. eða ca 21 e.Kr.', 'other').strip()) == 'innskot blaðamanns árið fjörutíu og fimm fyrir okkar tímatal eða fyrir Krist eða sirka tuttugu og eitt eftir Krist'
     assert re.sub("\s+", " ", normalize('5. sek. , 6. mín.', 'other').strip()) == 'fimmta sekúnda , sjötta mínúta'

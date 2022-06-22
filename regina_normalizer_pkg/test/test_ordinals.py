@@ -1,11 +1,18 @@
 
-from regina_normalizer import regina as r
-import pytest
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import abbr_functions
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import number_functions
+
 import re
 
 
 def normalize(sent, domain):
-    return r.handle_input(sent, domain)
+    pre_norm = abbr_functions.replace_abbreviations(sent, domain)
+    normalized = number_functions.handle_sentence(' '.join(pre_norm), domain)
+    result = []
+    for tup in normalized:
+        if len(tup) == 3:
+            result.append(tup[1])
+    return ' '.join(result)
 
 def test_ones_ord():
 	# masculine singular

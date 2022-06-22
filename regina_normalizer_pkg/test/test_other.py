@@ -1,11 +1,18 @@
 
-from regina_normalizer import regina as r
-import pytest
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import abbr_functions
+from src.regina_normalizer.regina_normalizer_pkg.regina_normalizer import number_functions
+
 import re
 
 
 def normalize(sent, domain):
-    return r.handle_input(sent, domain)
+    pre_norm = abbr_functions.replace_abbreviations(sent, domain)
+    normalized = number_functions.handle_sentence(' '.join(pre_norm), domain)
+    result = []
+    for tup in normalized:
+        if len(tup) == 3:
+            result.append(tup[1])
+    return ' '.join(result)
 
 def test_fraction():
     # masculine singular
@@ -31,7 +38,10 @@ def test_time():
     assert re.sub("\s+", " ", normalize('Klukkan er 14:10', 'other').strip()) == 'Klukkan er fjórtán tíu'
     assert re.sub("\s+", " ", normalize('Þetta gerist kl 09.45', 'other').strip()) == 'Þetta gerist klukkan núll níu fjörutíu og fimm'
     assert re.sub("\s+", " ", normalize('Það byrjar kl. 11:59', 'other').strip()) == 'Það byrjar klukkan ellefu fimmtíu og níu'
-    assert re.sub("\s+", " ", normalize('Það byrjar kl. 11:69', 'other').strip()) == 'Það byrjar klukkan einn einn tvípunktur sex níu'
+    # removed pronunciation of colon (':')
+    #assert re.sub("\s+", " ", normalize('Það byrjar kl. 11:69', 'other').strip()) == 'Það byrjar klukkan einn einn tvípunktur sex níu'
+    assert re.sub("\s+", " ", normalize('Það byrjar kl. 11:69',
+                                        'other').strip()) == 'Það byrjar klukkan einn einn sex níu'
 
 def test_digit():
     assert re.sub("\s+", " ", normalize('IP addressan er 24.1392.168', 'other').strip()) == 'I P addressan er tveir fjórir punktur einn þrír níu tveir punktur einn sex átta'

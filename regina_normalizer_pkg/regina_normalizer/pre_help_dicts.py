@@ -9,8 +9,11 @@ pre_help_dicts = {r"(\W|^)(?i)2ja(\W|$)": '\g<1>tveggja\g<2>',
 			    
 			    r"(?i)([a-záðéíóúýþæö]+)(\d+)": '\g<1> \g<2>',
 			    r"(?i)(\d+)([a-záðéíóúýþæö]+)": '\g<1> \g<2>',
-			    r"(\W|^)([A-ZÁÐÉÍÓÚÝÞÆÖ]+)(\-[A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö]+)(\W|$)": "\g<1>\g<2> \g<3>\g<4>",
-			    r"(\W|^)([A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö]+\-)([A-ZÁÐÉÍÓÚÝÞÆÖ]+)(\W|$)": "\g<1>\g<2> \g<3>\g<4>",
+				  # if we have an uppercase token on one or both sides of a hyphen, insert space on BOTH sides
+				  # of the hyphen (original: space only inserted on the side of definitely all uppercases)
+				  # example: EFTA-ríkin should become EFTA - ríkin and not EFTA -ríkin.
+			    r"(\W|^)([A-ZÁÐÉÍÓÚÝÞÆÖ]+)(\-)([A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö]+)(\W|$)": "\g<1>\g<2> \g<3> \g<4>\g<5>",
+			    r"(\W|^)([A-ZÁÐÉÍÓÚÝÞÆÖa-záðéíóúýþæö]+)(\-)([A-ZÁÐÉÍÓÚÝÞÆÖ]+)(\W|$)": "\g<1>\g<2> \g<3> \g<4>\g<5>",
 			    r"(?i)([\da-záðéíóúýþæö]+)(°)": '\g<1> \g<2>',
 			    r"(?i)([\da-záðéíóúýþæö]+)(\%)": '\g<1> \g<2>',
 			    r"(\W|^)(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[012])\.(\d{3,4})(\W|$)": " \g<1>\g<2>. \g<3>. \g<4>\g<5>",	

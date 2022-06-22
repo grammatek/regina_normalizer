@@ -39,7 +39,12 @@ abbr_dict = {'(\d+\.) gr\.(\W|$)': '\g<1> grein\g<2>',
 			 '(\W|^)([Ee]\-r)(\W|$)': '\g<1>einhver\g<3>',
 			 '(\W|^)([Ee]\-n)(\W|$)': '\g<1>einhvern\g<3>',
 			 '(\W|^)([Ee]\-um)(\W|$)': '\g<1>einhverjum\g<3>',
-			 '(\W|^)(f\.) (^((([012]?[1-9]|3[01])\. ?)?(jan(úar)?|feb(rúar)?|mars?|apr(íl)?|maí|jú[nl]í?|ág(úst)?|sep(t(ember)?)?|okt(óber)?|nóv(ember)?|des(ember)?) )\d{2,4}$)(\W|$)': '\g<1>fæddur \g<3>\g<4>',
+			 #'(\W|^)(f\.) (^((([012]?[1-9]|3[01])\. ?)?(jan(úar)?|feb(rúar)?|mars?|apr(íl)?|maí|jú[nl]í?|ág(úst)?|sep(t(ember)?)?|okt(óber)?|nóv(ember)?|des(ember)?) )\d{2,4}$)(\W|$)': '\g<1>fæddur \g<3>\g<4>',
+			 # ABN: corrected pattern for 'fæddur', repeated with 'd.' for 'dáinn'. TODO: how to differentiate between genders? Spell checker?
+			 # Note: the days pattern is somewhat flawed, 0. janúar would be a possible match ([0-9]), but we count on that pattern being sensible since the months are given as words
+			 # correct if this causes problems. We keep the 0 to be able to match '10'.
+			 '(\W|^)(f\.) (([012]?[0-9]|3[01])\. ?)((jan(úar)?|feb(rúar)?|mars?|apr(íl)?|maí|jú[nl]í?|ág(úst)?|sep(t(ember)?)?|okt(óber)?|nóv(ember)?|des(ember)?) \d{2,4})(\W|$)': '\g<1>fæddur \g<3>\g<5>',
+			 '(\W|^)(d\.) (([012]?[0-9]|3[01])\. ?)((jan(úar)?|feb(rúar)?|mars?|apr(íl)?|maí|jú[nl]í?|ág(úst)?|sep(t(ember)?)?|okt(óber)?|nóv(ember)?|des(ember)?) \d{2,4})(\W|$)': '\g<1>dáinn \g<3>\g<5>',
 			 '(\W|^)([Ff]él\.)(\W|$)': '\g<1>félag\g<3>',
 			 '(\W|^)([Ff]rh|FRH)\.?(\W|$)': '\g<1>framhald\g<3>',
 			 '(\W|^)([Ff]rt|FRT)\.?(\W|$)': '\g<1>framtíð\g<3>',
