@@ -1,4 +1,6 @@
-period_ptrn = r"\b(mán(ud)?|þri(ðjud)?|miðvikud|fim(mtud)?|fös(tud)?|lau(gard)|sun(nud)|jan|feb|mar|apr|jú[nl]|ágú?|sept?|okt|nóv|des)\.?|\b(I(II?|V|X)|(V|X|XV)I{1,3}|XI?[VX])\b"
+#TODO: this should be automatically generated, changes in dict have to be represented here as well
+# How about ignore case when matching?
+period_ptrn = r"\b(mán(ud)?|þri(ðjud)?|miðvikud|fim(mtud)?|fös(tud)?|lau(gard)|sun(nud)|[Jj]an|[Ff]eb|[Mm]ar|[Aa]pr|[Jj]ú[nl]|[Áá]gú?|[Ss]ept?|[Oo]kt|[Nn]óv|[Dd]es)\.?|\b(I(II?|V|X)|(V|X|XV)I{1,3}|XI?[VX])\b"
                          
 def make_period_dict():
     period_dict = {"(\W|^)mán(ud)?\.?(\W|$)": "\g<1>mánudag\g<3>",
@@ -9,17 +11,17 @@ def make_period_dict():
                     "(\W|^)lau(gard)?\.?(\W|$)": "\g<1>laugardag\g<3>",
                     "(\W|^)sun(nud)?\.?(\W|$)": "\g<1>sunnudag\g<3>",
 
-                    "(\W|^)jan\.?(\W|$)": "\g<1>janúar\g<2>",
-                    "(\W|^)feb\.?(\W|$)": "\g<1>febrúar\g<2>",
-                    "(\W|^)mar\.?(\W|$)": "\g<1>mars\g<2>",
-                    "(\W|^)apr\.?(\W|$)": "\g<1>apríl\g<2>",
-                    "(\W|^)jún\.?(\W|$)": "\g<1>júní\g<2>",
-                    "(\W|^)júl\.?(\W|$)": "\g<1>júlí\g<2>",
-                    "(\W|^)ágú?\.?(\W|$)": "\g<1>ágúst\g<2>",
-                    "(\W|^)sept?\.?(\W|$)": "\g<1>september\g<2>",
-                    "(\W|^)okt\.?(\W|$)": "\g<1>október\g<2>",
-                    "(\W|^)nóv\.?(\W|$)": "\g<1>nóvember\g<2>",
-                    "(\W|^)des\.?(\W|$)": "\g<1>desember\g<2>",
+                    "(\W|^)[Jj]an\.?(\W|$)": "\g<1>janúar\g<2>",
+                    "(\W|^)[Ff]eb\.?(\W|$)": "\g<1>febrúar\g<2>",
+                    "(\W|^)[Mm]ar\.?(\W|$)": "\g<1>mars\g<2>",
+                    "(\W|^)[Aa]pr\.?(\W|$)": "\g<1>apríl\g<2>",
+                    "(\W|^)[Jj]ún\.?(\W|$)": "\g<1>júní\g<2>",
+                    "(\W|^)[Jj]úl\.?(\W|$)": "\g<1>júlí\g<2>",
+                    "(\W|^)[Áá]gú?\.?(\W|$)": "\g<1>ágúst\g<2>",
+                    "(\W|^)[Ss]ept?\.?(\W|$)": "\g<1>september\g<2>",
+                    "(\W|^)[Oo]kt\.?(\W|$)": "\g<1>október\g<2>",
+                    "(\W|^)[Nn]óv\.?(\W|$)": "\g<1>nóvember\g<2>",
+                    "(\W|^)[Dd]es\.?(\W|$)": "\g<1>desember\g<2>",
 
                     "(\W|^)II\.?(\W|$)": "\g<1>annar\g<2>",
                     "(\W|^)III\.?(\W|$)": "\g<1>þriðji\g<2>",
