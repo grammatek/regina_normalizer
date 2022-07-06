@@ -116,12 +116,18 @@ def replace_domain(splitsent, domain, ptrn="\-|\–|\—"):
     replacement_index = []
     for i in range(len(splitsent)):
         try:
-            if re.match("\d", splitsent[i-1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
+            # original: does not work as intended, since at i == 0 splitsent[i-1] is the last element (splitsent[-1])
+            # of the array, so check for zero first
+            # if re.match("\d", splitsent[i-1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
+            if i > 0 and re.match("\d", splitsent[i - 1]) and re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i + 1]):
                 replacement_index.append(i)
                 if domain == 'sport':
                     splitsent[i] = ""
                 else:
                     splitsent[i] = "til"
+            # this is a potential negative number, like '-4,5', replace '-' with 'mínus'
+            elif re.match(ptrn, splitsent[i]) and re.match("\d", splitsent[i+1]):
+                splitsent[i] = "mínus"
         except:
             pass
         finalstring += splitsent[i] + " "

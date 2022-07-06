@@ -5,7 +5,7 @@ int_cols_million = ['hundred thousands','ten thousands','thousands', 'hundreds',
 int_cols_big = ['hundred billions', 'ten billions','billions', 'hundred millions','ten millions','millions',
                    'hundred thousands','ten thousands','thousands', 'hundreds','dozens', 'ones']
 
-decimal_cols_small = ['hundreds','dozens', 'ones', 'points_dozens', 'points_ones']
+decimal_cols_small = ['hundreds','dozens', 'ones', 'point_only', 'points', 'points_tens', 'points_dozens', 'points_ones']
 
 decimal_cols_thousand = ['thousands', 'hundreds','dozens', 'ones','points','point2','point3','point4',
                            'point5','point6','point7','point8','point9','point10']
@@ -28,7 +28,7 @@ cardinal_big_ptrn = "^[1-9]\d{0,2}(\.\d{3}){2,3}$"
 
 # small decimal numbers with max two decimal places, decimal digits should be pronounced as the whole number
 # e.g. 5,14 should be 'fimm komma fjórtán' and not 'fimm komma einn fjórir'
-decimal_small_ptrn = "^([1-9]\d{0,2}|0),\d{1,2}$"
+decimal_small_ptrn = "^([1-9]\d{0,3}|0),\d{1,2}$"
 # for larger decimal numbers the decimal digits are pronounced digit by digit:
 # 45,4053 : fjörutíu og fimm komma fjórir núll fimm þrír
 decimal_thousand_ptrn = "^([1-9]\.?\d{3}|[1-9]\d{0,2}|0),\d+$"

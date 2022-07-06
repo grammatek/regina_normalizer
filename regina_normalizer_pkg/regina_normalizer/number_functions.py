@@ -42,6 +42,7 @@ ordinal_thousand_tuples = oot.ordinal_ones_tuples + ctt.cardinal_thousands_tuple
 ordinal_million_tuples = ordinal_thousand_tuples + cmt.cardinal_million_tuples + omt.ordinal_million_tuples
 ordinal_big_tuples = ordinal_million_tuples + cbt.cardinal_big_tuples + obt.ordinal_big_tuples
 decimal_thousand_tuples = cardinal_thousand_tuples + dtt.decimal_thousands_tuples
+decimal_small_tuples = cardinal_thousand_tuples + dtt.decimal_small_tuples
 decimal_big_tuples = cardinal_big_tuples + dtt.decimal_thousands_tuples
 fraction_tuples = cardinal_thousand_tuples + ft.fraction_tuples
 sport_tuples = st.sport_tuples
@@ -155,11 +156,12 @@ def number_findall(word, tag, domain):
         cardinal_big_dict = make_dict(word, nh.int_cols_big)
         tmpword = fill_dict(word, tag, cardinal_big_tuples, cardinal_big_dict, nh.int_cols_big)
 
-    # TODO: implement better verbalization of small decimal numbers (5,14 = fimm komma fjórtán, and not
-    # fimm komma einn fjórir). Compare to time
-    #elif re.findall(nh.decimal_small_ptrn, word):
-    #    decimal_thousand_dict = make_dict(word, nh.decimal_cols_small)
-    #    tmpword = fill_dict(word, tag, decimal_thousand_tuples, decimal_thousand_dict, nh.decimal_cols_small)
+    # changed by ABN: check specially for a small decimal pattern to pronounce as a unit and not as
+    # separate numbers. If that (original) behaviour is wanted, skip this test and go straight to the next
+    # 'elif'-clause.
+    elif re.findall(nh.decimal_small_ptrn, word):
+        decimal_thousand_dict = make_dict(word, nh.decimal_cols_small)
+        tmpword = fill_dict(word, tag, decimal_small_tuples, decimal_thousand_dict, nh.decimal_cols_small)
 
     elif re.findall(nh.decimal_thousand_ptrn, word):
         decimal_thousand_dict = make_dict(word, nh.decimal_cols_thousand)
