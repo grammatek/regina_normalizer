@@ -2,8 +2,6 @@
 import re
 import sys
 import os
-import pos
-import torch
 
 from . import number_help as nh 
 
@@ -24,16 +22,6 @@ from . import  sport_tuples as st
 from . import  time_tuples as tt
 
 from . import  symbols_dict as sd
-
-# Initialize the tagger
-device = torch.device("cpu")  # CPU
-tagger: pos.Tagger = torch.hub.load(
-    repo_or_dir="cadia-lvl/POS",
-    model="tag", # This specifies which model to use. Set to 'tag_large' for large model.
-    device=device,
-    force_reload=False,
-    force_download=False,
-)
 
 cardinal_thousand_tuples = cot.cardinal_ones_tuples + ctt.cardinal_thousands_tuples
 cardinal_million_tuples = cardinal_thousand_tuples + cmt.cardinal_million_tuples
@@ -168,7 +156,7 @@ def number_findall(word, tag, domain):
     return word
 
 # Fill in the number, letter, link or symbol based on the tag of the next word
-def handle_sentence(sent, domain):
+def handle_sentence(sent, domain, tagger):
     returnsent = ""
     sentsplit = sent.split()
     dashsent = replace_domain(sentsplit, domain)
@@ -186,6 +174,30 @@ def handle_sentence(sent, domain):
         elif re.match(symb_ptrn, word):
             word = af.replace_all(word, symb_dict, symb_ptrn)
         returnsent += word + " "
+    return returnsent
+
+
+# Fill in the number, letter, link or symbol based on the tag of the next word
+# return a list of tuples containing a mapping from original token to normalized token
+def handle_sentence_tokenwise(sent, domain, tagger):
+    returnsent = []
+    sentsplit = sent.split()
+    tagsent = tagger.tag_sent(sentsplit)
+    split_zip = list(zip(sentsplit, list(tagsent[1:]) + [""]))
+    for word, nexttag in split_zip:
+        norm_word = word
+        if re.match("[\d½⅓¼⅔¾\-\–]", norm_word):
+            norm_word = number_findall(norm_word, nexttag, domain)
+        if re.match(nh.roman_letters_ptrn, norm_word):
+            norm_word = " ".join(norm_word)
+        elif re.match(nh.letters_ptrn, norm_word):
+            norm_word = " ".join(norm_word)
+        elif re.match(ap.link_ptrn_all, norm_word):
+            norm_word = wlink_fun(norm_word)
+        elif re.match(symb_ptrn, norm_word):
+            norm_word = af.replace_all(norm_word, symb_dict, symb_ptrn)
+        returnsent.append((word, norm_word))
+
     return returnsent
 
 

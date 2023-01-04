@@ -1,48 +1,43 @@
-**Dependencies**
+# Text normalization for TTS for Icelandic
 
-`pip install git+https://github.com/cadia-lvl/POS.git@v3.1.0`
+__This repository was forked from Reykjavik University, [LVL]: https://github.com/cadia-lvl/regina_normalizer__
 
-`pip install wandb`
+__regina_normalizer__ is a normalization system based on regular expressions. Its core functionality is to expand digits, symbols and abbreviations contained in an input text so that it can be converted to phoneme representation and then read by a speech synthesizer.
 
-Run `pip install regina-normalizer`
+# Setup
+* Clone the repository
+* Install requirements (preferably in a virtual environment)
+* Run `pip install -e .` from the root directory
 
-In a python shell, run:
+To try the normalization out from the command line:
 
-`import regina_normalizer.normalizer`
+`python3 regina_normalizer/main.py {sentence-to-be-normalized}`
 
-**Input string**
+for example
 
-`normalizer.input_string({text_string}, {domain})`
+`python3 regina_normalizer/main.py "10.010.000 kr aukalega"`
 
-Example:
+output:
 
-`normalizer.input_string("Leikurinn fór 2-2 fyrir KR.", "sport")`
+`[['tíu milljónir og tíu þúsund krónur aukalega']]` 
 
+Two additional arguments can be given to the command line interface: `-d` for __domain__ and `-f` for __format__.
+The normalizer has a special processing for domain "sport", but the default domain is "other", i.e. no special treatment for the input. The default format argument is "plain", returning a list of normalized sentences from the input (see example above). Using `-f "tokens"` returns a list of tuples, where one can see how each token was normalized:
 
-\>\>\> Leikurinn fór tvö tvö fyrir K R .
+`python3 regina_normalizer/main.py "Það eru 54 km eftir. Kostar þetta 1263 kr?" -f "tokens"` 
 
-**Input file**
+output: 
 
-`normalizer.input_file({input_file}, {output_file}, "other")`
+`[[('Það', 'það'), ('eru', 'eru'), ('54', ' fimmtíu og fjórir'), ('km', 'kílómetrar'), ('eftir', 'eftir'), ('.', '.')], [('kostar', 'kostar'), ('þetta', 'þetta'), ('1263', ' tólf hundruð sextíu og þrjár'), ('kr', 'krónur'), ('?', '?')]]`
 
-Example:
+Note that all ouptut is lowercased.
 
-`normalizer.input_file("input.txt", "output.txt", "other")`
+# License
+[MIT](LICENSE)
 
-input.txt:
+# Authors
+- Anna Björk Nikulásdóttir [email](anna@grammatek.com) (this fork)
+- Helga Svala Sigurðardóttir, Reykjavík University (original regina_normalizer)
 
-```
-Þetta þarf að norma a.m.k. 2x. Ég verð 3ja ára í sumar.
-Símanr er 888-3492, en hjá þér?
-Þetta ætti að taka 2-3 klst.
-```
-
-output.txt
-
-```
-Þetta þarf að norma að minnsta kosti tvö x . Ég verð þriggja ára í sumar . Símanúmer er átta átta átta <sil> þrír fjórir níu tveir , en hjá þér ? Þetta ætti að taka tvö til þrjár klukkustundir .
-```
-
-
-
-
+# Acknowledgements
+This project, both the original regina_normalizer and this derivative, is funded by the Language Technology Programme for Icelandic 2019-2023. The programme, which is managed and coordinated by [Almannarómur](https://almannaromur.is/), is funded by the Icelandic Ministry of Education, Science and Culture.

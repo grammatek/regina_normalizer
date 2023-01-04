@@ -1,0 +1,2 @@
+tokenizer >= 3.3.0
+git+https://github.com/cadia-lvl/POS.git@v3.0.0
